@@ -7,3 +7,28 @@ const should = chai.should();
 
 chai.use(chaiHttp);
 
+describe('blog posts', function() {
+    before(function() {
+        return runServer();
+    });
+    after(function() {
+        return closeServer();
+    });
+    it('should list items on GET', function () {
+       return chai.request(app) 
+        .get('/blog-posts')
+        .then(function(res) {
+            res.should.have.status(200);
+            res.should.be.json;
+            res.should.be.a('array');
+            res.body.length.should.be.at.least.(1);
+            const expectedKeys = ['title', 'content', 'author'];
+            res.body.forEach(function(item) { 
+                item.should.be.a('object');
+                item.should.include.keys(expectedKeys); 
+            });
+        });
+    });
+    
+
+});
